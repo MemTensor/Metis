@@ -10,49 +10,45 @@
     <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="assets/badges/paper.svg" alt="Technical report"></a>
     <img src="assets/badges/status.svg" alt="Research preview">
     <img src="assets/badges/backbone.svg" alt="Qwen3.5 backbone">
-    <a href="#model-checkpoints"><img src="assets/badges/models.svg" alt="Models coming soon"></a>
+    <img src="assets/badges/models.svg" alt="Models coming soon">
   </p>
 
   <p>
     <a href="https://arxiv.org/abs/XXXX.XXXXX">Paper</a> ·
+    <a href="#overview">Overview</a> ·
     <a href="#quick-start">Quick Start</a> ·
-    <a href="#model-checkpoints">Models</a> ·
-    <a href="#citation">Citation</a> ·
-    <a href="README_zh.md">中文</a>
+    <a href="#training">Training</a> ·
+    <a href="#evaluation">Evaluation</a> ·
+    <a href="#citation">Citation</a>
   </p>
 </div>
 
-> [!IMPORTANT]
-> **Research preview.** This repository currently provides the Metis architecture, Qwen3/Qwen3.5/Llama integration, multi-step mid-training code, inference tooling, DeepSpeed configuration, and checkpoint utilities. Public model checkpoints, training data, and a standalone evaluation harness are not included yet.
+## Research Preview
+
+To address the limitations of external memory, we introduce **memory foundation models** that empower large foundation models with **native memory**. This converts memory from an external module into an internal mechanism of the backbone, directly involved in forward computation. Memory foundation models are natively stateful across multiple inferences: they formulate, maintain, and utilize memory states inside the backbone from prior interactions. Based on this formulation, we propose **Metis**, the first prototype of a memory foundation model.
 
 ## Overview
 
-**Metis** is the first prototype of a **memory foundation model**: a foundation model whose memory state and memory procedures are native parts of the model rather than external retrieval workflows.
-
-Metis keeps a persistent, layer-wise memory state across interaction steps. It learns how to **remember, update, forget, reflect, and selectively use** stored information during the model's forward computation.
+Metis equips a foundation model with a persistent, layer-wise memory state and learns how to **remember, update, forget, reflect, and selectively use** stored information during forward computation.
 
 ![From external memory to native memory](assets/native_memory_vs_external.png)
 
-The project explores three ideas:
+The project explores three central ideas:
 
 - **Native memory state.** Dynamic parametric states live inside the backbone and participate directly in later forward passes.
 - **Native memory procedures.** Storage and utilization are learned from data instead of being implemented as separate retrieval, reranking, and prompt-construction rules.
 - **Fixed-size session state.** Historical information is compressed into a compact state, so later queries do not need to replay the original text history.
 
-Metis is an early research system, not a complete replacement for external memory. Hybrid native–external memory remains an important direction.
-
-## Architecture
-
-![Metis architecture](assets/metis_architecture.png)
+### Architecture
 
 A **Metis Block** is inserted into Transformer layers and contains two components:
 
-- **Local Memory Block:** maintains the dynamic memory matrix and normalization state that persist across interaction steps.
-- **Hyper Memory Block:** learns token selection, memory key/value projections, a dedicated memory query, and the state-update procedure.
+- The **Local Memory Block** maintains the dynamic memory matrix and normalization state that persist across interaction steps.
+- The **Hyper Memory Block** learns token selection, memory key/value projections, a dedicated memory query, and the state-update procedure.
 
-After each memory step, Metis selects informative hidden states and updates the local memory. During a later query, memory attention reads that state and fuses the result with the original attention branch. The paper implementation uses a **Gated Delta Network (GDN)** update.
+After each memory step, Metis selects informative hidden states and updates the local memory. During a later query, memory attention reads that state and fuses the result with the original attention branch. The default implementation uses a **Gated Delta Network (GDN)** update. In the Qwen3.5 hybrid implementation, Metis is attached to full-attention layers, while linear-attention layers keep their original computation path.
 
-In the current Qwen3.5 hybrid implementation, Metis is attached to full-attention layers; linear-attention layers keep their original computation path.
+Metis is an early research system rather than a complete replacement for external memory. Hybrid native–external memory remains an important direction.
 
 ## Quick Start
 
@@ -63,16 +59,7 @@ conda env create -f environment.yml
 conda activate metis
 ```
 
-The checked-in environment is a research lock file based on Python 3.10, PyTorch 2.4.1 + CUDA 11.8, Transformers 5.4.0, DeepSpeed, and Flash Linear Attention. CUDA extensions may require platform-specific adjustment.
-
-### 2. Verify the source tree
-
-```bash
-python -m compileall -q metis train
-python train/run_train.py --help
-```
-
-### 3. Run inference
+### 2. Run inference
 
 Run inference from a Metis delta or full checkpoint:
 
@@ -92,17 +79,9 @@ python run_inference.py \
   --commit_mode exchange
 ```
 
-`--commit_mode` supports:
+`--commit_mode none` leaves memory unchanged, `--commit_mode user` commits only the user message, and `--commit_mode exchange` commits both the user message and the model response.
 
-| Mode | Behavior |
-| --- | --- |
-| `none` | Do not update memory |
-| `user` | Commit the user message |
-| `exchange` | Commit the user message and model response |
-
-For a moved delta checkpoint, override the backbone with `--model_path /path/to/backbone` or the `MODEL_PATH` environment variable. Run `python run_inference.py --help` for all options.
-
-### Runtime memory lifecycle
+### Runtime Memory Lifecycle
 
 ```python
 model.reset()
@@ -128,19 +107,7 @@ model.reset()
 
 ## Data Format
 
-Metis accepts JSONL data in a flat layout:
-
-```text
-data/train/remember_explicit.jsonl
-```
-
-or a nested layout:
-
-```text
-data/train/remember/explicit_data.jsonl
-```
-
-Each line must contain one JSON object. `messages` is a list of memory chunks, and each chunk is a list of chat messages. `query_turn_id` selects the chunk whose final assistant response contributes to the loss.
+Each line of a Metis JSONL dataset contains one object. `messages` is a list of interaction chunks, each chunk is a list of chat messages, and `query_turn_id` selects the chunk whose final assistant response contributes to the loss.
 
 ```json
 {
@@ -160,117 +127,128 @@ Each line must contain one JSON object. `messages` is a list of memory chunks, a
 }
 ```
 
-Supported task IDs:
+## Training
 
-| Task | Data |
-| --- | --- |
-| 0 | Reconstruction and explicit/implicit recall |
-| 1 | Remember, forget, update, and reflection operations |
-| 2 | Distractor and long-context examples |
-| 3 | Samples marked as `task3` |
-| 4 | Samples marked as `task4` |
+### 1. Prepare the dataset
 
-## Preprocessing
+The Metis training dataset can be downloaded from **[URL to be released]**. Prepare separate training and validation splits in the JSONL format described above.
 
-Pre-tokenize the training and validation sets separately:
+### 2. Tokenize the dataset
+
+Pre-tokenize the training and validation splits with the tokenizer of the target backbone:
 
 ```bash
 python scripts/tokenize_dataset.py \
-  --data_dir data/train \
-  --output_dir data/tokenized/train \
+  --data_dir /path/to/metis-dataset/train \
+  --output_dir /path/to/tokenized/train \
   --model_path /path/to/backbone \
-  --tasks 0,1,2,3,4 \
   --max_total_tokens 1024
 
 python scripts/tokenize_dataset.py \
-  --data_dir data/valid \
-  --output_dir data/tokenized/valid \
+  --data_dir /path/to/metis-dataset/valid \
+  --output_dir /path/to/tokenized/valid \
   --model_path /path/to/backbone \
-  --tasks 0,1,2,3,4 \
   --max_total_tokens 1024
 ```
 
-Use `--overwrite` to replace an existing tokenized cache.
+All training tasks are included by default. Add `--overwrite` when intentionally replacing an existing tokenized cache.
 
-## Training
+### 3. Launch training
+
+A minimal tokenized-data run is:
 
 ```bash
 bash scripts/train.sh \
   --model-path /path/to/backbone \
   --name metis-run \
-  --train-data data/tokenized/train \
-  --valid-data data/tokenized/valid \
-  --output-dir checkpoints
+  --train-data /path/to/tokenized/train \
+  --valid-data /path/to/tokenized/valid
 ```
 
-Tokenized data is used by default. Add `--data-format raw` to train directly from JSONL files.
+The launcher freezes the backbone, disables LoRA, and trains the native-memory parameters. Its main arguments are:
 
-Common options:
+| Argument | Description |
+| --- | --- |
+| `--model-path` | Local backbone path or Hugging Face model ID. |
+| `--name` | Identifier for the training run. |
+| `--train-data` | Training cache, or a raw JSONL directory when `--data-format raw` is used. |
+| `--valid-data` | Validation cache or raw validation data. |
+| `--data-format` | `tokenized` by default; use `raw` to tokenize samples online. |
+| `--backbone-type` | `qwen3_5`, `qwen3`, or `llama`. |
+| `--cuda-visible-devices` | Comma-separated CUDA devices. |
+| `--nproc-per-node` | Number of data-parallel `torchrun` workers. |
+| `--batch-size` | Per-device batch size. |
+| `--grad-accum` | Gradient accumulation steps. The effective batch size is workers × per-device batch × accumulation. |
+| `--deepspeed` | Enable DeepSpeed with the specified configuration; `--no-deepspeed` disables it. |
+| `--resume-from-checkpoint` | Resume model, optimizer, scheduler, RNG, and training step; `auto` selects the newest checkpoint. |
+| `--init-from-checkpoint` | Load checkpoint weights but start a fresh optimizer and training state. |
+
+The default memory recipe is:
 
 ```text
---backbone-type qwen3_5|qwen3|llama
---cuda-visible-devices 0,1,2,3
---nproc-per-node 4
---batch-size 2
---grad-accum 10
+NormedReweightLearnedQueryMetisBlock
++ StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory
++ NormalizedDeltaNetMetisLocalMemory
+```
+
+Append one of the following options to the launcher command to switch the hyper-memory variant:
+
+```text
+# Last-token gated-delta update.
 --metis-hyper-memory-type LastTokenGatedDeltaRuleMetisHyperMemory
---deepspeed configs/ds_zero3.json
+
+# AlphaTopP token selection without the gated-delta update.
+--metis-hyper-memory-type StraightThroughAlphaTopPKeyNormMetisHyperMemory
 ```
 
-Run `bash scripts/train.sh --help` for the complete launcher interface.
+`--metis-block-type`, `--metis-hyper-memory-type`, and `--metis-local-memory-type` can be combined to study block fusion, token aggregation/update, and local-state variants respectively.
 
-Training runs in the background. Logs are written to `logs/`, and model outputs are written to `<output-dir>/<name>/`.
+Common optimization and validation controls are environment variables:
 
-### Validation
+| Variable | Meaning |
+| --- | --- |
+| `LR` | Learning rate; default `2e-4`. |
+| `NUM_EPOCHS` / `MAX_STEPS` | Epoch-based or step-limited training. |
+| `WARMUP_STEPS` | Constant-with-warmup scheduler warmup. |
+| `SAVE_STEPS` | Checkpoint interval. |
+| `EVAL_STEPS` | Validation interval; set to `0` to disable validation. |
+| `GEN_EVAL_STEPS` | Generation-evaluation interval; `0` runs generation at every validation point. |
+| `EVAL_SAMPLES` / `EVAL_SAMPLES_PER_TASK` | Size and per-task balance of the fixed validation subset. |
+| `TASKS` | Comma-separated training-task subset; all five tasks are enabled by default. |
 
-When `EVAL_STEPS` is greater than zero, training performs loss and generation evaluation on a fixed validation subset.
+For example, prefix the launcher with `LR=1e-4 NUM_EPOCHS=3 EVAL_STEPS=1000` to override those defaults. For settings exposed by both interfaces, an explicit launcher option takes precedence over its environment variable.
 
-```text
-<output-dir>/<name>/eval_samples_manifest.json
-<output-dir>/<name>/eval_metrics.jsonl
-```
+### Training Tasks
 
-Configure validation with `EVAL_STEPS`, `GEN_EVAL_STEPS`, `EVAL_SAMPLES`, and `EVAL_SAMPLES_PER_TASK`.
+Metis organizes the objectives into five sampling tasks:
 
-## Data and Optimization
+| Task | Training behavior |
+| --- | --- |
+| 0 | Reconstruction and explicit/implicit fact recall. |
+| 1 | Explicit/implicit remember, forget, update, and reflection operations. |
+| 2 | Distractor and long-context variants of the memory operations. |
+| 3 | Mixed and LLM-snippet memory interactions. |
+| 4 | Normal and no-query interactions that regularize memory pollution. |
 
-Metis is mid-trained on temporally ordered, multi-step interactions. Earlier steps transform the native memory state; later query steps provide supervised responses.
+The sampler anneals each task from `TASK0_WEIGHT_START` … `TASK4_WEIGHT_START` to the corresponding `*_END` value across training. Memory reconstruction establishes high-fidelity storage, operation supervision teaches instruction-driven state changes, and the later tasks reduce interference, collateral forgetting, and memory leakage.
 
-| Memory behavior | Training pattern |
-|---|---|
-| Remember | Store a fact and answer a later query |
-| Update | Replace an earlier value with a newer one |
-| Forget | Revoke information before a later query |
-| Reflection | Compose multiple stored facts |
-| Robustness | Handle distractors, multiple entities, selective forgetting, and memory-irrelevant dialogue |
+## Evaluation
 
-The training objective combines:
+Training-time evaluation uses the validation split supplied to `train.sh`. `EVAL_STEPS` controls loss evaluation, while `GEN_EVAL_STEPS` controls the more expensive generation evaluation. A standalone evaluation package will be released separately.
 
-1. **Memory reconstruction** to warm up high-fidelity storage and recovery.
-2. **Memory operations** to learn instruction-driven remember, update, forget, and reflection behavior.
-3. **Regularization** to reduce interference, collateral forgetting, and memory pollution.
-
-The backbone is frozen during mid-training; only native-memory parameters are optimized. See Sections 4–5 of the [technical report](https://arxiv.org/abs/XXXX.XXXXX) for the complete data construction pipeline, sampling curriculum, and objectives.
-
-## Paper Highlights
-
-The report evaluates Metis without replaying the original evidence at query time.
+The technical report evaluates Metis without replaying the original evidence at query time:
 
 - Metis-27B reaches **73.77** on the Metis Test set and **50.82** on NextMem under the no-context setting.
-- In a controlled single-A800, batch-size-1 context-length sweep with the 4B model, Metis query latency remains nearly independent of stored history length and achieves an **11.37× query-latency speedup** over Full Context at 128K history for 32 generated tokens.
+- In a controlled single-A800, batch-size-1 sweep, Metis-4B achieves an **11.37× query-latency speedup** over Full Context at 128K history for 32 generated tokens.
 - A rank-64 Metis-4B state occupies **2.11 MB per session** and retains **99.9%** of the full-state average score in the report's compression study.
 
 These results are configuration-specific. The full benchmark tables, prompts, baselines, and evaluation protocol are provided in the [technical report](https://arxiv.org/abs/XXXX.XXXXX).
-
-## Model Checkpoints
-
-Public model checkpoints are not released yet. Links will be added here when they become available.
 
 ## Roadmap
 
 ![Roadmap for memory foundation models](assets/memory_foundation_model_roadmap.png)
 
-The paper frames native memory as a progression from **stateful capability** to **self-managing memory**, **experience-driven learning**, **persistent cognition**, and ultimately **self-evolving capability**.
+The paper frames native memory as a progression from **stateful capability** to **self-managing memory**, **experience-driven learning**, **persistent cognition**, and ultimately **self-evolving capability**. Upcoming repository releases will add public checkpoints, training data, and standalone evaluation tooling.
 
 ## Citation
 
@@ -299,10 +277,6 @@ This project uses separate licenses for the paper and the repository software:
 Commercial use of the repository software is not permitted under the PolyForm Noncommercial License. For commercial licensing inquiries, please contact the authors.
 
 Unless explicitly stated otherwise, model weights, datasets, benchmark assets, trademarks, and third-party materials are not covered by the licenses above. Their applicable terms will be provided with the corresponding releases.
-
-## Acknowledgements
-
-Metis builds on PyTorch, Hugging Face Transformers, DeepSpeed, Flash Linear Attention, and Qwen3.5, together with prior research on fast weight programming, memory-augmented neural networks, test-time training, long-context modeling, and agent memory.
 
 ## Contact
 
