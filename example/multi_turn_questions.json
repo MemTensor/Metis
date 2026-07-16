@@ -1,0 +1,23 @@
+{
+  "memory_demo": {
+    "system": "You are a helpful assistant.",
+    "turns": [
+      "Please remember that my badge number is M-2487.",
+      "Please remember that my preferred deployment region is ap-southeast-1.",
+      "What is my badge number?",
+      "Which deployment region did I prefer?"
+    ]
+  },
+  "update_demo": {
+    "system": "You are a helpful assistant.",
+    "turns": [
+      "Please remember that my phone number is 555-0100.",
+      "Update: my phone number has changed to 555-0200.",
+      "What is my phone number?"
+    ]
+  },
+  "plain_list_demo": [
+    "Please remember that my launch code is ORION-73.",
+    "What launch code did I tell you?"
+  ]
+}
