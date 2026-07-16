@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+message: "If you use Metis in your research, please cite the accompanying technical report."
+title: "Metis"
+type: software
+authors:
+  - family-names: Zhang
+    given-names: Zeyu
+  - family-names: Guo
+    given-names: Ziliang
+  - family-names: Sun
+    given-names: Yihang
+  - family-names: Zhang
+    given-names: Xichong
+  - family-names: Hao
+    given-names: Xixuan
+  - family-names: Lin
+    given-names: Zehao
+  - family-names: Zhang
+    given-names: Yang
+  - family-names: Zhao
+    given-names: Xiaoyan
+  - family-names: Shen
+    given-names: Tong
+  - family-names: Tang
+    given-names: Bo
+  - family-names: Xu
+    given-names: Zhi-Qin John
+  - family-names: Yan
+    given-names: Junchi
+  - family-names: Wang
+    given-names: Haofen
+  - family-names: Chen
+    given-names: Xu
+  - family-names: Xiong
+    given-names: Feiyu
+  - family-names: Li
+    given-names: Zhiyu
+  - family-names: Chua
+    given-names: Tat-Seng
+preferred-citation:
+  type: article
+  title: "Metis: Memory Foundation Model"
+  authors:
+    - family-names: Zhang
+      given-names: Zeyu
+    - family-names: Guo
+      given-names: Ziliang
+    - family-names: Sun
+      given-names: Yihang
+    - family-names: Zhang
+      given-names: Xichong
+    - family-names: Hao
+      given-names: Xixuan
+    - family-names: Lin
+      given-names: Zehao
+    - family-names: Zhang
+      given-names: Yang
+    - family-names: Zhao
+      given-names: Xiaoyan
+    - family-names: Shen
+      given-names: Tong
+    - family-names: Tang
+      given-names: Bo
+    - family-names: Xu
+      given-names: Zhi-Qin John
+    - family-names: Yan
+      given-names: Junchi
+    - family-names: Wang
+      given-names: Haofen
+    - family-names: Chen
+      given-names: Xu
+    - family-names: Xiong
+      given-names: Feiyu
+    - family-names: Li
+      given-names: Zhiyu
+    - family-names: Chua
+      given-names: Tat-Seng
+  year: 2026
