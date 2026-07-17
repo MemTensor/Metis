@@ -1,0 +1,90 @@
+{
+  "schema_version": 2,
+  "experiment": "tables_5_6_11_main",
+  "status": "canonical_evaluation_protocol",
+  "expected_cells": 77,
+  "judge": {
+    "model": "gpt-4.1-mini",
+    "temperature": 0,
+    "repeats": 3,
+    "aggregation": "api_median",
+    "strict_only": true
+  },
+  "generation": {
+    "do_sample": false,
+    "memory_methods_max_new_tokens": 96,
+    "context_methods_max_new_tokens": {"memqa": 96, "memops": 256},
+    "metis_test_context_max_input_tokens": 32768
+  },
+  "benchmarks": [
+    {"id": "locomo_tps16", "runner_id": "locomo_gold"},
+    {"id": "nextmem_stm", "runner_id": "nextmem_contextual_generation"},
+    {"id": "metis_test_nomixed", "runner_id": "metis_test"},
+    {"id": "metisops_v23_full_segments", "runner_id": "memops_full"},
+    {"id": "metisops_v23_gold_turns", "runner_id": "memops_gold"}
+  ],
+  "methods": [
+    {"id": "qwen4b_no_context", "implementation": "no_context", "model": "qwen3_5_4b"},
+    {"id": "qwen9b_no_context", "implementation": "no_context", "model": "qwen3_5_9b"},
+    {
+      "id": "qwen27b_no_context",
+      "implementation": "no_context",
+      "model": "qwen3_5_27b",
+      "device_map": "auto",
+      "max_memory": ["0:75GiB", "1:75GiB"]
+    },
+    {"id": "qwen4b_full_context", "implementation": "full_context", "model": "qwen3_5_4b"},
+    {"id": "qwen9b_full_context", "implementation": "full_context", "model": "qwen3_5_9b"},
+    {
+      "id": "qwen27b_full_context",
+      "implementation": "full_context",
+      "model": "qwen3_5_27b",
+      "device_map": "auto",
+      "max_memory": ["0:75GiB", "1:75GiB"]
+    },
+    {
+      "id": "dense_rag4b",
+      "implementation": "partial_context",
+      "model": "qwen3_5_4b",
+      "embedding_model": "bge_m3",
+      "skip_benchmarks": ["nextmem_stm"]
+    },
+    {
+      "id": "dense_rag9b",
+      "implementation": "partial_context",
+      "model": "qwen3_5_9b",
+      "embedding_model": "bge_m3",
+      "skip_benchmarks": ["nextmem_stm"]
+    },
+    {
+      "id": "dense_rag27b",
+      "implementation": "partial_context",
+      "model": "qwen3_5_27b",
+      "embedding_model": "bge_m3",
+      "device_map": "auto",
+      "max_memory": ["0:75GiB", "1:75GiB"],
+      "skip_benchmarks": ["nextmem_stm"]
+    },
+    {"id": "delta_mem4b", "implementation": "delta_mem", "model": "qwen3_4b_instruct_2507", "adapter": "delta_mem_4b_adapter"},
+    {"id": "temp_lora4b", "implementation": "temp_lora", "model": "qwen3_5_4b", "seed": 20260702},
+    {"id": "temp_lora9b", "implementation": "temp_lora", "model": "qwen3_5_9b", "seed": 20260702},
+    {
+      "id": "temp_lora27b",
+      "implementation": "temp_lora",
+      "model": "qwen3_5_27b",
+      "seed": 20260702,
+      "device_map": "balanced",
+      "max_memory": ["0:76GiB", "1:76GiB"]
+    },
+    {"id": "metis4b_v24_s14000", "implementation": "metis", "checkpoint": "metis4b_v24_s14000"},
+    {"id": "metis9b_v24_s8000", "implementation": "metis", "checkpoint": "metis9b_v24_s8000"},
+    {
+      "id": "metis27b_v24_s14000",
+      "implementation": "metis",
+      "checkpoint": "metis27b_v24_s14000",
+      "device_map": "paired_layers",
+      "model_parallel_devices": "cuda:0,cuda:1",
+      "max_memory": ["0:75GiB", "1:75GiB"]
+    }
+  ]
+}

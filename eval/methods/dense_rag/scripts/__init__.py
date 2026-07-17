@@ -1,0 +1,1 @@
+"""DenseRAG benchmark entry points."""

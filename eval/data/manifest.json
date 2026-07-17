@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "payload_version": "metis-eval-2026-07-13",
+  "files": [
+    {
+      "id": "locomo_tps16",
+      "path": "memqa/locomo_evidence_sessions_tps16_20260626.jsonl",
+      "experiments": ["main", "ablation", "lowrank"],
+      "rows": 1527,
+      "bytes": 27852814,
+      "sha256": "a3f13d61e6aced68fb2c63f87002b116273cf0f9fef18c44cb301fe544874e76",
+      "first_instance_id": "locomo_conv-26__evidence_sessions_1__qa_0000",
+      "last_instance_id": "locomo_conv-50__evidence_sessions_30__qa_0157",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "nextmem_stm",
+      "path": "memqa/nextmem_stm_official_task2_20260622.jsonl",
+      "experiments": ["main", "ablation", "lowrank"],
+      "rows": 1697,
+      "bytes": 4156875,
+      "sha256": "af9b35645afa10baaedb74b28675aa7ecdbd77c0cd245bbd43c8e413a1e6dc42",
+      "first_instance_id": "nextmem_stm_hotpot_000000",
+      "last_instance_id": "nextmem_stm_longmemeval_000492",
+      "source": "https://github.com/nuster1128/NextMem",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "metis_test_nomixed",
+      "path": "memops/metis_test_v2_4_memoryops_test_nomixed_20260707.jsonl",
+      "experiments": ["main", "ablation", "lowrank"],
+      "rows": 852,
+      "bytes": 10354156,
+      "sha256": "7ae813df35d4435a6b294d850539de68bd207fc003ab8916718f923b6f73f899",
+      "first_instance_id": "metistest_v2_t1_exp_bamboo_0034__q01",
+      "last_instance_id": "metistest_v2_t3a_snippet_066525__q03",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "metisops_v23_full_segments",
+      "path": "memops/metisops_v23_full_segments_20260626.jsonl",
+      "experiments": ["main", "ablation"],
+      "rows": 531,
+      "bytes": 23707155,
+      "sha256": "521c3a09f966aa66a5709101aba2259ad3aaa513b0559a7169504d40dc7792b4",
+      "first_instance_id": "metisops_v23_full_segments_A01_reflect__p1_operation_trace",
+      "last_instance_id": "metisops_v23_full_segments_F08_update__p5_operation_application",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "metisops_v23_gold_turns",
+      "path": "memops/metisops_v23_gold_turns_20260626.jsonl",
+      "experiments": ["main", "ablation", "lowrank"],
+      "rows": 531,
+      "bytes": 8289808,
+      "sha256": "40f2361cb6667a94210f76cfb35f63500279d89d5fe665a1199ac7a05005aa10",
+      "first_instance_id": "metisops_v23_gold_turns_A01_reflect__p1_operation_trace",
+      "last_instance_id": "metisops_v23_gold_turns_F08_update__p5_operation_application",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "atm",
+      "path": "ood/atm.jsonl",
+      "experiments": ["ood"],
+      "rows": 1013,
+      "bytes": 6585553,
+      "sha256": "1cde93a099b3b5b1c62bc30415b1d4098c7d9641922d168abafc9314a796da7d",
+      "first_instance_id": "atm__1defb7d5-aab4-4244-8b3c-971a36376b04",
+      "last_instance_id": "atm__80423439-70b2-4a3a-8a58-8356b70a9c19",
+      "redistribution_status": "license_review_required"
+    },
+    {
+      "id": "memdaily",
+      "path": "ood/memdaily.jsonl",
+      "experiments": ["ood"],
+      "rows": 2952,
+      "bytes": 10627345,
+      "sha256": "a5763f497bf3c393215dd84c15cbe022e1acb704174e265a78fa0188cbb1d7f2",
+      "first_instance_id": "memdaily__aggregative__events__0",
+      "last_instance_id": "memdaily__simple__roles__99",
+      "redistribution_status": "license_review_required"
+    }
+  ]
+}

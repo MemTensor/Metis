@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "note": "Public model IDs may be replaced by local mirrors. Relative paths resolve from the Metis_dev repository root.",
+  "assets": {
+    "qwen3_5_4b": "Qwen/Qwen3.5-4B",
+    "qwen3_5_9b": "Qwen/Qwen3.5-9B",
+    "qwen3_5_27b": "Qwen/Qwen3.5-27B",
+    "qwen3_4b_instruct_2507": "Qwen/Qwen3-4B-Instruct-2507",
+    "bge_m3": "BAAI/bge-m3",
+    "delta_mem_4b_adapter": "artifacts/adapters/delta-mem-qwen3-4b-instruct",
+    "metis4b_v24_s14000": "artifacts/checkpoints/metis4b-v2.4-checkpoint-14000",
+    "metis9b_v24_s8000": "artifacts/checkpoints/metis9b-v2.4-checkpoint-8000",
+    "metis27b_v24_s14000": "artifacts/checkpoints/metis27b-v2.4-checkpoint-14000",
+    "metis4b_v1_gdn_t01_s14000": "artifacts/checkpoints/ablation/metis4b-without-ms-and-mp-checkpoint-14000",
+    "metis4b_v22_gdn_t0124_s14000": "artifacts/checkpoints/ablation/metis4b-without-ms-checkpoint-14000",
+    "metis4b_v24_gdn_t01234_s14000": "artifacts/checkpoints/metis4b-v2.4-checkpoint-14000",
+    "metis4b_v24_lu_t01234_s14000": "artifacts/checkpoints/ablation/metis4b-without-gdu-checkpoint-14000",
+    "metis4b_v24_agg_lta_t01234_s14000": "artifacts/checkpoints/ablation/metis4b-without-sa-checkpoint-14000",
+    "metis4b_v24_query_bq_t01234_s14000": "artifacts/checkpoints/ablation/metis4b-without-oq-checkpoint-14000",
+    "metis4b_v24_readout_nr_t01234_s14000": "artifacts/checkpoints/ablation/metis4b-without-qkn-checkpoint-14000"
+  }
+}

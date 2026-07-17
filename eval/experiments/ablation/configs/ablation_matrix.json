@@ -1,0 +1,280 @@
+{
+  "schema_version": 2,
+  "updated_at": "2026-07-16",
+  "branch_id": "paper_table_7_ablation",
+  "ownership": "paper_reported_protocol",
+  "result_root": "outputs/paper/table_7_ablation",
+  "reference_checkpoint_id": "metis4b_v24_gdn_t01234_s14000",
+  "formal_reference_scores": {
+    "locomo_tps16": 0.16306483300589392,
+    "nextmem_stm": 0.41691219799646434,
+    "metis_test_nomixed": 0.5671948356807511,
+    "metisops_v23_full_segments": 0.09698681732580038,
+    "metisops_v23_gold_turns": 0.17843691148775895
+  },
+  "main_text_benchmark_ids": [
+    "locomo_tps16",
+    "nextmem_stm",
+    "metis_test_nomixed",
+    "metisops_v23_gold_turns"
+  ],
+  "appendix_benchmark_ids": [
+    "metisops_v23_full_segments"
+  ],
+  "evaluation": {
+    "context_policy": "memory_only",
+    "query_style": "memory_direct",
+    "dtype": "bfloat16",
+    "max_new_tokens": 96,
+    "judge_model": "gpt-4.1-mini",
+    "judge_repeats": 3,
+    "strict_only": true,
+    "fail_on_judge_error": true,
+    "fail_on_query_audit_issue": true,
+    "memop_oom_policy": "fail"
+  },
+  "benchmarks": [
+    {
+      "id": "locomo_tps16",
+      "lane": "memqa",
+      "instances": "eval/data/memqa/locomo_evidence_sessions_tps16_20260626.jsonl",
+      "rows": 1527,
+      "sha256": "a3f13d61e6aced68fb2c63f87002b116273cf0f9fef18c44cb301fe544874e76",
+      "first_instance_id": "locomo_conv-26__evidence_sessions_1__qa_0000",
+      "last_instance_id": "locomo_conv-50__evidence_sessions_30__qa_0157"
+    },
+    {
+      "id": "nextmem_stm",
+      "lane": "memqa",
+      "instances": "eval/data/memqa/nextmem_stm_official_task2_20260622.jsonl",
+      "rows": 1697,
+      "sha256": "af9b35645afa10baaedb74b28675aa7ecdbd77c0cd245bbd43c8e413a1e6dc42",
+      "first_instance_id": "nextmem_stm_hotpot_000000",
+      "last_instance_id": "nextmem_stm_longmemeval_000492"
+    },
+    {
+      "id": "metis_test_nomixed",
+      "lane": "memop",
+      "instances": "eval/data/memops/metis_test_v2_4_memoryops_test_nomixed_20260707.jsonl",
+      "rows": 852,
+      "sha256": "7ae813df35d4435a6b294d850539de68bd207fc003ab8916718f923b6f73f899",
+      "first_instance_id": "metistest_v2_t1_exp_bamboo_0034__q01",
+      "last_instance_id": "metistest_v2_t3a_snippet_066525__q03"
+    },
+    {
+      "id": "metisops_v23_full_segments",
+      "lane": "memop",
+      "instances": "eval/data/memops/metisops_v23_full_segments_20260626.jsonl",
+      "rows": 531,
+      "sha256": "521c3a09f966aa66a5709101aba2259ad3aaa513b0559a7169504d40dc7792b4",
+      "first_instance_id": "metisops_v23_full_segments_A01_reflect__p1_operation_trace",
+      "last_instance_id": "metisops_v23_full_segments_F08_update__p5_operation_application"
+    },
+    {
+      "id": "metisops_v23_gold_turns",
+      "lane": "memop",
+      "instances": "eval/data/memops/metisops_v23_gold_turns_20260626.jsonl",
+      "rows": 531,
+      "sha256": "40f2361cb6667a94210f76cfb35f63500279d89d5fe665a1199ac7a05005aa10",
+      "first_instance_id": "metisops_v23_gold_turns_A01_reflect__p1_operation_trace",
+      "last_instance_id": "metisops_v23_gold_turns_F08_update__p5_operation_application"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "metis4b_v1_gdn_t01_s14000",
+      "paper_ablation": "without_ms_and_mp",
+      "label": "Metis 4B v1 GDN/GDU task01 checkpoint-14000",
+      "axes": [
+        "data"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v1_gdn_t01_s14000",
+      "step": 14000,
+      "epoch": 3.207331042382589,
+      "task_ids": [
+        0,
+        1
+      ],
+      "task_samples": 349255,
+      "training_data_manifest_sha256": "7d3520020bbb5a10d7ad26e3c2302c23057eec64f0a13f228bbe4b426c5c8f66",
+      "world_size": 4,
+      "per_device_train_batch_size": 4,
+      "gradient_accumulation_steps": 5,
+      "effective_batch": 80,
+      "learning_rate": 0.0002,
+      "resume_from_step": 13095,
+      "selected_from_max_steps": 16000,
+      "delta_sha256": "2881be77ce3e13b6b5f39b42318ca8ab2130a2dc9aec43b72ba6e4b11bf10189",
+      "config_sha256": "89dbc6e3b522c3f086a2e18e6c7f12ebf96b82e30188f8f052fcfe4fc159150b",
+      "trainer_state_sha256": "1baebd5e57186045e215665434a48d4b510b9082c0b86aba2f96a5b2e31a841d",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 80,
+      "comparability": "paper-reported fixed-step data ablation; exact 14000-step match to v2.2 and v2.4 controls, with epoch varying by included-data volume"
+    },
+    {
+      "id": "metis4b_v22_gdn_t0124_s14000",
+      "paper_ablation": "without_ms",
+      "label": "Metis 4B v2.2 GDN/GDU task0124 checkpoint-14000",
+      "axes": [
+        "data"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v22_gdn_t0124_s14000",
+      "step": 14000,
+      "epoch": 1.1509396734573079,
+      "task_ids": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "task_samples": 974133,
+      "delta_sha256": "a5c9f3bd404f2154b0099c44cec29eaed56f0f7fdc30fc6d6e1aa5853384fcfe",
+      "config_sha256": "029894d1632f0a3d85c6131a71c807fd4cc543ff3e99a0e7c45de8dc25bbbbeb",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 80,
+      "comparability": "paper-reported fixed-step data ablation"
+    },
+    {
+      "id": "metis4b_v24_gdn_t01234_s14000",
+      "paper_ablation": "full",
+      "label": "Metis 4B v2.4 GDN task01234 checkpoint-14000 formal reference",
+      "axes": [
+        "data",
+        "structure"
+      ],
+      "status": "reference_ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v24_gdn_t01234_s14000",
+      "step": 14000,
+      "epoch": 1.002434588339754,
+      "task_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "task_samples": 1118272,
+      "delta_sha256": "a42ca8268d115658fb72bb480978fe4150e77958266f069251b2fe70d8df1d07",
+      "config_sha256": "029894d1632f0a3d85c6131a71c807fd4cc543ff3e99a0e7c45de8dc25bbbbeb",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 80,
+      "comparability": "formal reference; full rerun disabled by default"
+    },
+    {
+      "id": "metis4b_v24_lu_t01234_s14000",
+      "paper_ablation": "without_gdu",
+      "label": "Metis 4B v2.4 LU/KeyNorm task01234 checkpoint-14000",
+      "axes": [
+        "structure"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v24_lu_t01234_s14000",
+      "step": 14000,
+      "epoch": 1.002434588339754,
+      "task_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "task_samples": 1118272,
+      "delta_sha256": "aa76dfa16c8807e343cf1500633ca6e41019408c4e430ccdc2501210d902e638",
+      "config_sha256": "f8cfc800b2e92d0f3af6fe3ed24b85ba3cb30326dac21b2c64387f72494a2b76",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPKeyNormMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 48,
+      "comparability": "paper-reported v2.4 single-structure-variable ablation against the formal GDN reference"
+    },
+    {
+      "id": "metis4b_v24_agg_lta_t01234_s14000",
+      "paper_ablation": "without_sa",
+      "label": "Metis 4B v2.4 aggregation LTA task01234 checkpoint-14000",
+      "axes": [
+        "structure"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v24_agg_lta_t01234_s14000",
+      "step": 14000,
+      "epoch": 1.002434588339754,
+      "task_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "task_samples": 1118272,
+      "delta_sha256": "812530762fb15ab0686c9977287541daf724e82f0da6fc813a1ef05f9064a46a",
+      "config_sha256": "9d17a179691b370ec7c011d61e831f03ab1e8217ed290f1eb0ff1eeb7f516358",
+      "expected_hyper_memory_type": "LastTokenGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 72,
+      "comparability": "paper-reported v2.4 single-structure-variable ablation: AlphaTopP token selection becomes last-real-token selection; gated-delta update is unchanged"
+    },
+    {
+      "id": "metis4b_v24_query_bq_t01234_s14000",
+      "paper_ablation": "without_oq",
+      "label": "Metis 4B v2.4 query BQ task01234 checkpoint-14000",
+      "axes": [
+        "structure"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v24_query_bq_t01234_s14000",
+      "step": 14000,
+      "epoch": 1.002434588339754,
+      "task_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "task_samples": 1118272,
+      "delta_sha256": "d76a49a0fd19e1516197da4e4a8842eb581ccd7f9d497330336d8a28241a5deb",
+      "config_sha256": "dae5c2ff3fbd11327ee95ff86c43069d6437fef255da8e18a56f772b185d3b34",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "NormalizedDeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightMetisBlock",
+      "expected_delta_tensors": 64,
+      "comparability": "paper-reported v2.4 single-structure-variable ablation: dedicated trainable memory-read query is removed and the frozen backbone query is used"
+    },
+    {
+      "id": "metis4b_v24_readout_nr_t01234_s14000",
+      "paper_ablation": "without_qkn",
+      "label": "Metis 4B v2.4 readout NR task01234 checkpoint-14000",
+      "axes": [
+        "structure"
+      ],
+      "status": "ready",
+      "checkpoint": "artifacts/checkpoints/metis4b_v24_readout_nr_t01234_s14000",
+      "step": 14000,
+      "epoch": 1.002434588339754,
+      "task_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "task_samples": 1118272,
+      "delta_sha256": "92c272019ceda6fe9c50e5e193155c83a4c4a239d85c37851525a7ca86f96768",
+      "config_sha256": "3d8ad16bb938c140b9add5a8b6ddfadbe01c7229726f124a19e2e881d2123076",
+      "expected_hyper_memory_type": "StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory",
+      "expected_local_memory_type": "DeltaNetMetisLocalMemory",
+      "expected_block_type": "NormedReweightLearnedQueryMetisBlock",
+      "expected_delta_tensors": 80,
+      "comparability": "paper-reported v2.4 single-structure-variable ablation: normalized DeltaNet readout becomes unnormalized DeltaNet readout"
+    }
+  ]
+}

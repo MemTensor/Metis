@@ -1,0 +1,24 @@
+name: metis-paper-eval-cu118
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.20
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu118
+      - torch==2.7.1+cu118
+      - numpy==1.26.4
+      - transformers==5.4.0
+      - accelerate==1.13.0
+      - safetensors==0.7.0
+      - peft==0.19.1
+      - causal-conv1d==1.6.2.post1
+      - einops==0.8.2
+      - fla-core==0.5.0
+      - flash-linear-attention==0.5.0
+      - ninja==1.13.0
+      - sentencepiece==0.2.1
+      - huggingface-hub>=1.0,<2
+      - requests>=2.31,<3
+      - tqdm>=4.66,<5
+      - pytest>=8,<9
