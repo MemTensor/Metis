@@ -47,7 +47,7 @@ After each memory step, Metis selects informative hidden states and updates the 
 
 Metis is an early research system rather than a complete replacement for external memory. Hybrid native–external memory remains an important direction.
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Create the environment
 
@@ -124,7 +124,7 @@ Each line of a Metis JSONL dataset contains one object. `messages` is a list of 
 }
 ```
 
-## Training
+## 🏋️ Training
 
 ### 1. Prepare the dataset
 
@@ -162,23 +162,7 @@ bash scripts/train.sh \
   --valid-data /path/to/tokenized/valid
 ```
 
-The launcher freezes the backbone, disables LoRA, and trains the native-memory parameters. Its main arguments are:
-
-| Argument | Description |
-| --- | --- |
-| `--model-path` | Local backbone path or Hugging Face model ID. |
-| `--name` | Identifier for the training run. |
-| `--train-data` | Training cache, or a raw JSONL directory when `--data-format raw` is used. |
-| `--valid-data` | Validation cache or raw validation data. |
-| `--data-format` | `tokenized` by default; use `raw` to tokenize samples online. |
-| `--backbone-type` | `qwen3_5`, `qwen3`, or `llama`. |
-| `--cuda-visible-devices` | Comma-separated CUDA devices. |
-| `--nproc-per-node` | Number of data-parallel `torchrun` workers. |
-| `--batch-size` | Per-device batch size. |
-| `--grad-accum` | Gradient accumulation steps. The effective batch size is workers × per-device batch × accumulation. |
-| `--deepspeed` | Enable DeepSpeed with the specified configuration; `--no-deepspeed` disables it. |
-| `--resume-from-checkpoint` | Resume model, optimizer, scheduler, RNG, and training step; `auto` selects the newest checkpoint. |
-| `--init-from-checkpoint` | Load checkpoint weights but start a fresh optimizer and training state. |
+The launcher freezes the backbone, disables LoRA, and trains the native-memory parameters. Complete argument descriptions, default values, validation controls, and the task schedule are documented in [`scripts/train.sh`](scripts/train.sh); run `bash scripts/train.sh --help` for the command-line interface.
 
 The default memory recipe is:
 
@@ -200,45 +184,36 @@ Append one of the following options to the launcher command to switch the hyper-
 
 `--metis-block-type`, `--metis-hyper-memory-type`, and `--metis-local-memory-type` can be combined to study block fusion, token aggregation/update, and local-state variants respectively.
 
-Common optimization and validation controls are environment variables:
+Common optimization and validation controls are environment variables. For example, the following command reproduces the main settings of a 4-GPU Qwen3.5-4B run with per-device batch size 4, gradient accumulation 2, three epochs, and last-token gated-delta memory updates (effective batch size 32):
 
-| Variable | Meaning |
-| --- | --- |
-| `LR` | Learning rate; default `2e-4`. |
-| `NUM_EPOCHS` / `MAX_STEPS` | Epoch-based or step-limited training. |
-| `WARMUP_STEPS` | Constant-with-warmup scheduler warmup. |
-| `SAVE_STEPS` | Checkpoint interval. |
-| `EVAL_STEPS` | Validation interval; set to `0` to disable validation. |
-| `GEN_EVAL_STEPS` | Generation-evaluation interval; `0` runs generation at every validation point. |
-| `EVAL_SAMPLES` / `EVAL_SAMPLES_PER_TASK` | Size and per-task balance of the fixed validation subset. |
-| `TASKS` | Comma-separated training-task subset; all five tasks are enabled by default. |
+```bash
+LR=2e-4 NUM_EPOCHS=3 \
+bash scripts/train.sh \
+  --model-path /path/to/Qwen3.5-4B \
+  --name metis-qwen35-4b-agg-lta-gdu-4gpu-bs4-ga5-3ep \
+  --train-data /path/to/tokenized/train \
+  --valid-data /path/to/tokenized/valid \
+  --backbone-type qwen3_5 \
+  --cuda-visible-devices 0,1,2,3 \
+  --nproc-per-node 4 \
+  --batch-size 4 \
+  --grad-accum 5 \
+  --metis-hyper-memory-type LastTokenGatedDeltaRuleMetisHyperMemory
+```
 
-For example, prefix the launcher with `LR=1e-4 NUM_EPOCHS=3 EVAL_STEPS=1000` to override those defaults. For settings exposed by both interfaces, an explicit launcher option takes precedence over its environment variable.
-
-### Training Tasks
-
-Metis organizes the objectives into five sampling tasks:
-
-| Task | Training behavior |
-| --- | --- |
-| 0 | Reconstruction and explicit/implicit fact recall. |
-| 1 | Explicit/implicit remember, forget, update, and reflection operations. |
-| 2 | Distractor and long-context variants of the memory operations. |
-| 3 | Mixed and LLM-snippet memory interactions. |
-| 4 | Normal and no-query interactions that regularize memory pollution. |
-
-The sampler anneals each task from `TASK0_WEIGHT_START` … `TASK4_WEIGHT_START` to the corresponding `*_END` value across training. Memory reconstruction establishes high-fidelity storage, operation supervision teaches instruction-driven state changes, and the later tasks reduce interference, collateral forgetting, and memory leakage.
-
-## Evaluation
+## 📊 Evaluation
 
 
 ## Roadmap
 
 ![Roadmap for memory foundation models](assets/memory_foundation_model_roadmap.png)
 
-The paper frames native memory as a progression from **stateful capability** to **self-managing memory**, **experience-driven learning**, **persistent cognition**, and ultimately **self-evolving capability**. Upcoming repository releases will add public checkpoints, training data, and standalone evaluation tooling.
+The paper frames native memory as a progression from **stateful capability** to **self-managing memory**, **experience-driven learning**, **persistent cognition**, and ultimately **self-evolving capability**.
 
-## Citation
+Metis is an early research system rather than a complete replacement for external memory. Hybrid native–external memory remains an important direction.
+
+
+## 📝 Citation
 
 A machine-readable `CITATION.cff` is included at the repository root.
 
@@ -255,7 +230,7 @@ A machine-readable `CITATION.cff` is included at the repository root.
 }
 ```
 
-## License
+## ⚖️ License
 
 This project uses separate licenses for the paper and the repository software:
 
@@ -266,6 +241,6 @@ Commercial use of the repository software is not permitted under the PolyForm No
 
 Unless explicitly stated otherwise, model weights, datasets, benchmark assets, trademarks, and third-party materials are not covered by the licenses above. Their applicable terms will be provided with the corresponding releases.
 
-## Contact
+## 📬 Contact
 
 Research correspondence: [lizy@memtensor.cn](mailto:lizy@memtensor.cn) and [xu.chen@ruc.edu.cn](mailto:xu.chen@ruc.edu.cn).

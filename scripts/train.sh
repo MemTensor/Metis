@@ -1,16 +1,67 @@
 #!/bin/bash
 # Metis training launcher.
 #
-# Default recipe:
-#   NormedReweightLearnedQueryMetisBlock
-#   + StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory (GDN)
-#   + NormalizedDeltaNetMetisLocalMemory
-#   tasks 0-4, tokenized data, freeze backbone, LoRA off.
+# Configuration reference
+# =======================
 #
-# Every parameter from the recipe doc is either set explicitly here or already
-# the run_train.py default (weight_decay=0.01, max_grad_norm=1.0, seed=42,
-# constant_with_warmup scheduler, alpha_top_p=0.9,
-# qk_kernel_type=elu_plus_one, lora_r=0).
+# Required launcher arguments (no defaults):
+#   --model-path PATH       Local backbone path or Hugging Face model ID.
+#   --name NAME             Training-run identifier.
+#   --train-data PATH       Tokenized cache, or raw JSONL with --data-format raw.
+#   --valid-data PATH       Tokenized validation cache or raw validation data.
+#
+# Launcher options and defaults:
+#   --data-format            tokenized (alternative: raw)
+#   --backbone-type          qwen3_5 (alternatives: qwen3, llama)
+#   --output-dir             checkpoints
+#   --cuda-visible-devices   0,1,2,3
+#   --nproc-per-node         4
+#   --batch-size             2 per device
+#   --grad-accum             10; effective batch = workers * batch * accumulation
+#   --deepspeed              disabled unless a config path is supplied
+#   --resume-from-checkpoint unset; "auto" selects the newest checkpoint
+#   --init-from-checkpoint   unset; loads weights without optimizer/run state
+#
+# Environment-variable defaults:
+#   MASTER_PORT=29540                  MAX_TOTAL_TOKENS=1024
+#   TASKS=0,1,2,3,4                   LR=2e-4
+#   WEIGHT_DECAY=0.01                 MAX_GRAD_NORM=1.0
+#   WARMUP_STEPS=200                  NUM_EPOCHS=2
+#   MAX_STEPS=0                       SAVE_STEPS=2000
+#   CHECKPOINT_SAVE_MODE=delta        EVAL_STEPS=1000
+#   GEN_EVAL_STEPS=0                  EVAL_SAMPLES=60
+#   EVAL_SAMPLES_PER_TASK=20          USE_WANDB=1
+#   WANDB_PROJECT=metis_training
+#
+# Memory-architecture defaults:
+#   METIS_BLOCK_TYPE=NormedReweightLearnedQueryMetisBlock
+#   METIS_HYPER_MEMORY_TYPE=StraightThroughAlphaTopPGatedDeltaRuleMetisHyperMemory
+#   METIS_LOCAL_MEMORY_TYPE=NormalizedDeltaNetMetisLocalMemory
+#   UPDATE_RATIO=0.9                  COMMIT_HIDDEN_OFFSET=0
+#   STRIDE_INTERVAL=8                 POOL_TEMPERATURE=1.0
+#   METIS_REWEIGHT_GAMMA=0.9          ALPHA_TOP_P=0.9
+#   QK_KERNEL_TYPE=elu_plus_one       GATED_DELTA_ALPHA_INIT=1.0
+#   GATED_DELTA_BETA_INIT=1.0
+#
+# Common hyper-memory variants:
+#   LastTokenGatedDeltaRuleMetisHyperMemory
+#   StraightThroughAlphaTopPKeyNormMetisHyperMemory
+#
+# Task schedule (START -> END over training):
+#   Task 0  0.25 -> 0.10   reconstruction and explicit/implicit fact recall
+#   Task 1  0.35 -> 0.25   remember, forget, update, and reflection operations
+#   Task 2  0.20 -> 0.30   distractor and long-context memory operations
+#   Task 3  0.10 -> 0.20   mixed and LLM-snippet memory interactions
+#   Task 4  0.10 -> 0.15   normal/no-query examples for memory regularization
+#
+# The backbone is frozen and LoRA is disabled. Only native-memory parameters
+# are optimized. run_train.py additionally defaults to seed=42, a
+# constant-with-warmup scheduler, and lora_r=0.
+#
+# Set environment variables before the command to override recipe settings.
+# Explicit launcher options take precedence over matching environment values.
+# Pass arguments after -- directly to train/run_train.py. Set DRY_RUN=1 to
+# print the resolved configuration without launching training.
 
 set -euo pipefail
 
