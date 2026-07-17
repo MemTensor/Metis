@@ -26,7 +26,9 @@
 
 ## Overview
 
-Metis equips a foundation model with a persistent, layer-wise memory state and learns how to **remember, update, forget, reflect, and selectively use** stored information during forward computation.
+**Metis is the first prototype of a memory foundation model, equipping foundation models with a persistent and dynamically evolving native memory state.**
+
+It learns to autonomously store and utilize information through model computation, compressing historical context into native memory and accessing it through memory attention. At inference time, all model weights remain frozen, while memory is updated through gradient-free forward computation.
 
 ![From external memory to native memory](assets/native_memory_vs_external.png)
 
@@ -45,7 +47,6 @@ A **Metis Block** is inserted into Transformer layers and contains two component
 
 After each memory step, Metis selects informative hidden states and updates the local memory. During a later query, memory attention reads that state and fuses the result with the original attention branch. The default implementation uses a **Gated Delta Network (GDN)** update. In the Qwen3.5 hybrid implementation, Metis is attached to full-attention layers, while linear-attention layers keep their original computation path.
 
-Metis is an early research system rather than a complete replacement for external memory. Hybrid native–external memory remains an important direction.
 
 ## 🚀 Quick Start
 
