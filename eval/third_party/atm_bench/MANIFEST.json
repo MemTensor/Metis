@@ -1,0 +1,10 @@
+{
+  "source_repository": "https://github.com/JingbiaoMei/ATM-Bench",
+  "source_revision": "d463445614ad78a48736b98ab901795f7ecaf3da",
+  "files": {
+    "memqa/utils/evaluator/config.py": "d00f6466af43744e290e27ebb62d58df4d69b3b408decd7d6633aac7657d2c8b",
+    "memqa/utils/evaluator/evaluate_qa.py": "7fde28d7dea6ebbbba96bdb3f48ba7b774ca5c2cf5e2be807d87ac091493ec30",
+    "memqa/utils/evaluator/normalizer.py": "1d1ca77334d0741de53c76771cab033417331e5927730905a2e36b4aed1a441d",
+    "memqa/utils/evaluator/qtype_utils.py": "9186fe0f409b99384a0d78c988d1dbdfd66a74546f254ce1f1ed46e3cc115518"
+  }
+}

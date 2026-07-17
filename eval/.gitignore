@@ -1,0 +1,18 @@
+# Downloaded evaluation payloads
+!data/
+data/**/*.jsonl
+data/.cache/
+data/raw/
+data/build/
+
+# Local models, checkpoints, adapters, and host-specific asset registries.
+artifacts/
+
+# Generated evidence and local interpreter state. Run manifests, score metadata,
+# audits, and logs can contain machine-local paths or endpoint metadata, so keep
+# the whole result tree local and track only its public documentation.
+results/**
+!results/README.md
+outputs/
+**/__pycache__/
+*.py[cod]

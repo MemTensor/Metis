@@ -1,0 +1,39 @@
+{
+  "schema_version": 2,
+  "experiment": "table_8_ood",
+  "status": "paper_reported_protocol",
+  "expected_cells": 14,
+  "context_policy": "official_gold_evidence_written_to_memory_query_only",
+  "generation": {"do_sample": false, "max_new_tokens": 96},
+  "judge": {"model": "gpt-4.1-mini", "temperature": 0, "repeats": 3, "strict_only": true},
+  "datasets": ["atm", "memdaily"],
+  "methods": [
+    {"id": "temp_lora4b", "implementation": "temp_lora", "model": "qwen3_5_4b", "seed": 20260714},
+    {"id": "temp_lora9b", "implementation": "temp_lora", "model": "qwen3_5_9b", "seed": 20260714},
+    {
+      "id": "temp_lora27b",
+      "implementation": "temp_lora",
+      "model": "qwen3_5_27b",
+      "seed": 20260714,
+      "device_map": "balanced",
+      "max_memory": ["0:76GiB", "1:76GiB"]
+    },
+    {"id": "delta_mem4b", "implementation": "delta_mem", "model": "qwen3_4b_instruct_2507", "adapter": "delta_mem_4b_adapter"},
+    {"id": "metis4b", "implementation": "metis", "checkpoint": "metis4b_v24_s14000"},
+    {"id": "metis9b", "implementation": "metis", "checkpoint": "metis9b_v24_s8000"},
+    {
+      "id": "metis27b",
+      "implementation": "metis",
+      "checkpoint": "metis27b_v24_s14000",
+      "device_map": "paired_layers",
+      "model_parallel_devices": "cuda:0,cuda:1",
+      "max_memory": ["0:75GiB", "1:75GiB"]
+    }
+  ],
+  "exclusions": {
+    "base_no_context_full_context": "reported only in the OOD diagnostic evidence, not in paper Table 8",
+    "rhelm": "retired from the current OOD protocol",
+    "dense_rag": "gold evidence is already selected; retrieval would change the protocol",
+    "delta_mem9b_27b": "no released evaluated adapter assets"
+  }
+}

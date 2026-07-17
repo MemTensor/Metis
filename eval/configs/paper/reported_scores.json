@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "unit": "percentage_points",
+  "source": "Metis paper Tables 5-8, 10, and 11",
+  "judge": {
+    "model": "gpt-4.1-mini",
+    "repeats": 3,
+    "aggregation": "median"
+  },
+  "main": {
+    "benchmarks": [
+      "metisops_v23_gold_turns",
+      "metis_test_nomixed",
+      "locomo_tps16",
+      "nextmem_stm",
+      "metisops_v23_full_segments"
+    ],
+    "scores": {
+      "qwen4b_full_context": [84.56, 75.18, 63.52, 77.15, 83.52],
+      "qwen9b_full_context": [86.86, 73.89, 63.00, 77.05, 85.69],
+      "qwen27b_full_context": [87.90, 78.87, 65.03, 78.80, 87.19],
+      "dense_rag4b": [30.18, 64.82, 23.54, null, 22.83],
+      "dense_rag9b": [22.41, 60.68, 21.97, null, 15.77],
+      "dense_rag27b": [28.01, 65.40, 23.17, null, 18.50],
+      "qwen4b_no_context": [1.65, 16.96, 0.18, 11.86, 1.51],
+      "qwen9b_no_context": [1.88, 18.64, 0.07, 15.93, 1.65],
+      "qwen27b_no_context": [1.69, 16.87, 0.07, 17.75, 1.84],
+      "temp_lora4b": [8.85, 19.34, 9.99, 24.20, 9.98],
+      "temp_lora9b": [13.51, 19.51, 11.72, 28.12, 12.19],
+      "temp_lora27b": [9.70, 23.86, 4.24, 30.97, 10.83],
+      "delta_mem4b": [4.38, 15.03, 10.79, 20.42, 3.06],
+      "metis4b_v24_s14000": [17.84, 56.72, 16.31, 41.69, 9.70],
+      "metis9b_v24_s8000": [19.63, 57.92, 16.81, 43.39, 11.53],
+      "metis27b_v24_s14000": [24.76, 73.77, 26.74, 50.82, 15.35]
+    }
+  },
+  "ablation": {
+    "benchmarks": [
+      "metisops_v23_gold_turns",
+      "metis_test_nomixed",
+      "locomo_tps16",
+      "nextmem_stm"
+    ],
+    "scores": {
+      "full": [17.84, 56.72, 16.31, 41.69],
+      "without_ms": [14.64, 51.53, 14.78, 37.79],
+      "without_ms_and_mp": [14.45, 42.17, 14.18, 36.17],
+      "without_gdu": [18.50, 58.54, 11.97, 42.78],
+      "without_sa": [3.67, 19.72, 9.84, 18.49],
+      "without_oq": [13.89, 53.93, 11.46, 37.07],
+      "without_qkn": [9.32, 48.74, 10.00, 26.80]
+    }
+  },
+  "ood": {
+    "datasets": ["atm", "memdaily"],
+    "scores": {
+      "delta_mem4b": [2.27, 39.84],
+      "temp_lora4b": [2.57, 44.92],
+      "temp_lora9b": [2.86, 51.42],
+      "temp_lora27b": [2.57, 59.45],
+      "metis4b": [10.22, 52.54],
+      "metis9b": [16.49, 47.29],
+      "metis27b": [18.56, 59.04]
+    }
+  },
+  "low_rank": {
+    "ranks": [1, 4, 16, 64, 128, 256, "full"],
+    "scores": {
+      "locomo_tps16": [11.31, 10.81, 14.21, 16.00, 16.36, 16.14, 16.31],
+      "nextmem_stm": [22.80, 27.83, 38.69, 41.43, 41.78, 41.71, 41.69],
+      "metis_test_nomixed": [17.99, 41.26, 53.64, 56.63, 56.75, 56.04, 56.72],
+      "metisops_v23_gold_turns": [5.60, 11.49, 18.36, 18.36, 18.17, 18.79, 17.84]
+    }
+  },
+  "metis_checkpoints": {
+    "metis4b_v24_s14000": {
+      "step": 14000,
+      "delta_sha256": "a42ca8268d115658fb72bb480978fe4150e77958266f069251b2fe70d8df1d07"
+    },
+    "metis9b_v24_s8000": {
+      "step": 8000,
+      "delta_sha256": "0c2835c3aebdc5e33a1bf4560ee041657f209f6230554505164b7d670115dcb6"
+    },
+    "metis27b_v24_s14000": {
+      "step": 14000,
+      "delta_sha256": "ec60eaf707693045cb967a0c79282eedc83f7ec50c6e094e48d721f7226b22ad"
+    }
+  }
+}

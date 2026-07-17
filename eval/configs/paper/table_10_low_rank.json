@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "experiment": "figure_4_table_10_low_rank",
+  "protocol_status": "paper_table_10",
+  "result_status": "paper_reported",
+  "expected_cells": 28,
+  "ranks": [1, 4, 16, 64, 128, 256, "full"],
+  "projection": {"policy": "after_each_commit", "target": "state"},
+  "models": [
+    {
+      "id": "metis4b_v24_s14000",
+      "checkpoint": "metis4b_v24_s14000",
+      "model_label_prefix": "metis_v24_4b_s14000_lm",
+      "delta_sha256": "a42ca8268d115658fb72bb480978fe4150e77958266f069251b2fe70d8df1d07"
+    }
+  ],
+  "benchmarks": [
+    {"id": "locomo_tps16", "runner_name": "locomo_tps16", "lane": "memqa"},
+    {"id": "nextmem_stm", "runner_name": "nextmem_stm", "lane": "memqa"},
+    {"id": "metis_test_nomixed", "runner_name": "metis_test", "lane": "memop"},
+    {"id": "metisops_v23_gold_turns", "runner_name": "metisops_v23_gold_turns", "lane": "memop"}
+  ],
+  "scoring": {
+    "judge_model": "gpt-4.1-mini",
+    "judge_repeats": 3,
+    "aggregation": "api_median",
+    "strict_only": true,
+    "fail_on_judge_error": true
+  }
+}
