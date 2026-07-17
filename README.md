@@ -7,10 +7,8 @@
 
   <p>
     <!-- TODO: replace PAPER_URL below with the public technical report link (e.g. arXiv) -->
-    <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="assets/badges/paper.svg" alt="Technical report"></a>
-    <img src="assets/badges/status.svg" alt="Research preview">
-    <img src="assets/badges/backbone.svg" alt="Qwen3.5 backbone">
-    <img src="assets/badges/models.svg" alt="Models coming soon">
+    <a href="https://statics.memtensor.com.cn/paper/metis_v1.pdf"><img src="assets/badges/paper.svg" alt="Preview"></a>
+    <a href="https://huggingface.co/collections/IAAR-Shanghai/metis"><img src="assets/badges/models.svg" alt="HuggingFace"></a>
   </p>
 
   <p>
