@@ -29,7 +29,7 @@ def resolve_asset(asset_id: str, assets: dict[str, str]) -> str:
     if asset_id not in assets:
         raise KeyError(f"asset {asset_id!r} is missing from eval/configs/assets.json")
     value = assets[asset_id]
-    if value.startswith(("artifacts/", "./", "../")):
+    if value.startswith(("eval/artifacts/", "artifacts/", "./", "../")):
         return str((REPO_ROOT / value).resolve())
     return value
 

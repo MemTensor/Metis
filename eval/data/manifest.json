@@ -9,9 +9,14 @@
       "rows": 1527,
       "bytes": 27852814,
       "sha256": "a3f13d61e6aced68fb2c63f87002b116273cf0f9fef18c44cb301fe544874e76",
+      "content_sha256": "af2cd3cee160280d0481b8f6bd4e848eb8d184bac15899d823a6d6ec426004a7",
       "first_instance_id": "locomo_conv-26__evidence_sessions_1__qa_0000",
       "last_instance_id": "locomo_conv-50__evidence_sessions_30__qa_0157",
-      "redistribution_status": "license_review_required"
+      "source": "https://github.com/snap-research/LoCoMo",
+      "raw_path": "locomo/locomo10.json",
+      "raw_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+      "builder": "eval.data.prepare:build_locomo",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "nextmem_stm",
@@ -20,10 +25,14 @@
       "rows": 1697,
       "bytes": 4156875,
       "sha256": "af9b35645afa10baaedb74b28675aa7ecdbd77c0cd245bbd43c8e413a1e6dc42",
+      "content_sha256": "8fea6a52b3c2b9518874efb6bc047bcc922ba1451e36e5f1b6e30378b2fd695a",
       "first_instance_id": "nextmem_stm_hotpot_000000",
       "last_instance_id": "nextmem_stm_longmemeval_000492",
       "source": "https://github.com/nuster1128/NextMem",
-      "redistribution_status": "license_review_required"
+      "source_revision": "df63035",
+      "raw_path": "nextmem/stm_*_test.json",
+      "builder": "eval.data.prepare:build_nextmem",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "metis_test_nomixed",
@@ -32,9 +41,15 @@
       "rows": 852,
       "bytes": 10354156,
       "sha256": "7ae813df35d4435a6b294d850539de68bd207fc003ab8916718f923b6f73f899",
+      "content_sha256": "f26b9e689b5e8737290c698515f6899f27ef3c105d62ccbfd7180d3c308a2ef7",
       "first_instance_id": "metistest_v2_t1_exp_bamboo_0034__q01",
       "last_instance_id": "metistest_v2_t3a_snippet_066525__q03",
-      "redistribution_status": "license_review_required"
+      "source": "owner-provided MetisTest v2.4 source directory",
+      "raw_path": "metis_test/",
+      "raw_all_jsonl_sha256": "6eb5ae93891b1a6bd62179061ee4af47c9484951741d6cb4ad0d2aa1094d07b3",
+      "raw_manifest_sha256": "98a5ae30fe372ffadd5f3a6e7cc2ed8795c4efb1c37e49c2b39bb65fa2c12b7b",
+      "builder": "eval.data.prepare:build_metis_test",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "metisops_v23_full_segments",
@@ -43,9 +58,14 @@
       "rows": 531,
       "bytes": 23707155,
       "sha256": "521c3a09f966aa66a5709101aba2259ad3aaa513b0559a7169504d40dc7792b4",
+      "content_sha256": "a267ac4508f139640ebed48dd50ec51cd6a55e51cac4cbad1b14a2ea7dac46a3",
       "first_instance_id": "metisops_v23_full_segments_A01_reflect__p1_operation_trace",
       "last_instance_id": "metisops_v23_full_segments_F08_update__p5_operation_application",
-      "redistribution_status": "license_review_required"
+      "source": "owner-provided MetisOps v23 artifact",
+      "raw_path": "metisops/memoryops_v23_30topic_artifacts.zip",
+      "raw_sha256": "0175cc216438f495aa4620cb595bf33a11845c287f719e95a032b5407f798dfa",
+      "builder": "eval.data.prepare:build_metisops",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "metisops_v23_gold_turns",
@@ -54,9 +74,14 @@
       "rows": 531,
       "bytes": 8289808,
       "sha256": "40f2361cb6667a94210f76cfb35f63500279d89d5fe665a1199ac7a05005aa10",
+      "content_sha256": "1a6f50f1ae70ff167dcad43c5b435b96dd8674a74ca0b0e4739c52a26535d798",
       "first_instance_id": "metisops_v23_gold_turns_A01_reflect__p1_operation_trace",
       "last_instance_id": "metisops_v23_gold_turns_F08_update__p5_operation_application",
-      "redistribution_status": "license_review_required"
+      "source": "owner-provided MetisOps v23 artifact",
+      "raw_path": "metisops/memoryops_v23_30topic_artifacts.zip",
+      "raw_sha256": "0175cc216438f495aa4620cb595bf33a11845c287f719e95a032b5407f798dfa",
+      "builder": "eval.data.prepare:build_metisops",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "atm",
@@ -65,9 +90,14 @@
       "rows": 1013,
       "bytes": 6585553,
       "sha256": "1cde93a099b3b5b1c62bc30415b1d4098c7d9641922d168abafc9314a796da7d",
+      "content_sha256": "da725213a971abd867ab394baa92ce11d34f3335cb1b4562a93b046afba5776d",
       "first_instance_id": "atm__1defb7d5-aab4-4244-8b3c-971a36376b04",
       "last_instance_id": "atm__80423439-70b2-4a3a-8a58-8356b70a9c19",
-      "redistribution_status": "license_review_required"
+      "source": "https://huggingface.co/datasets/Jingbiao/ATM-Bench",
+      "source_revision": "78e826dc07e97466b2f54443831ef9a83ab8b27c",
+      "raw_path": "atm/",
+      "builder": "eval.data.prepare:build_atm",
+      "redistribution_status": "not_distributed"
     },
     {
       "id": "memdaily",
@@ -76,9 +106,15 @@
       "rows": 2952,
       "bytes": 10627345,
       "sha256": "a5763f497bf3c393215dd84c15cbe022e1acb704174e265a78fa0188cbb1d7f2",
+      "content_sha256": "10eb22393d26079b2973a046f1b1ae52c1b3f4d05427280d57676369e83747ad",
       "first_instance_id": "memdaily__aggregative__events__0",
       "last_instance_id": "memdaily__simple__roles__99",
-      "redistribution_status": "license_review_required"
+      "source": "https://github.com/nuster1128/MemSim",
+      "source_revision": "db9d5d552d6cb1d859f692eb7e6c0fd6d61d3815",
+      "raw_path": "memdaily/memdaily.json",
+      "raw_sha256": "8c02c2da3c60b456f5e6986e741d6c2aa77d317941f164745efdbd37733bc161",
+      "builder": "eval.data.prepare:build_memdaily",
+      "redistribution_status": "not_distributed"
     }
   ]
 }

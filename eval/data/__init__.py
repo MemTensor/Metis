@@ -1,1 +1,1 @@
-"""Download and verify the normalized Metis evaluation datasets."""
+"""Prepare and verify local Metis evaluation datasets."""

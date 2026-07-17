@@ -3,7 +3,7 @@
   "updated_at": "2026-07-16",
   "branch_id": "paper_table_7_ablation",
   "ownership": "paper_reported_protocol",
-  "result_root": "outputs/paper/table_7_ablation",
+  "result_root": "eval/outputs/paper/table_7_ablation",
   "reference_checkpoint_id": "metis4b_v24_gdn_t01234_s14000",
   "formal_reference_scores": {
     "locomo_tps16": 0.16306483300589392,
@@ -89,7 +89,7 @@
         "data"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v1_gdn_t01_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v1_gdn_t01_s14000",
       "step": 14000,
       "epoch": 3.207331042382589,
       "task_ids": [
@@ -122,7 +122,7 @@
         "data"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v22_gdn_t0124_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v22_gdn_t0124_s14000",
       "step": 14000,
       "epoch": 1.1509396734573079,
       "task_ids": [
@@ -149,7 +149,7 @@
         "structure"
       ],
       "status": "reference_ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v24_gdn_t01234_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v24_gdn_t01234_s14000",
       "step": 14000,
       "epoch": 1.002434588339754,
       "task_ids": [
@@ -176,7 +176,7 @@
         "structure"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v24_lu_t01234_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v24_lu_t01234_s14000",
       "step": 14000,
       "epoch": 1.002434588339754,
       "task_ids": [
@@ -203,7 +203,7 @@
         "structure"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v24_agg_lta_t01234_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v24_agg_lta_t01234_s14000",
       "step": 14000,
       "epoch": 1.002434588339754,
       "task_ids": [
@@ -230,7 +230,7 @@
         "structure"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v24_query_bq_t01234_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v24_query_bq_t01234_s14000",
       "step": 14000,
       "epoch": 1.002434588339754,
       "task_ids": [
@@ -257,7 +257,7 @@
         "structure"
       ],
       "status": "ready",
-      "checkpoint": "artifacts/checkpoints/metis4b_v24_readout_nr_t01234_s14000",
+      "checkpoint": "eval/artifacts/checkpoints/metis4b_v24_readout_nr_t01234_s14000",
       "step": 14000,
       "epoch": 1.002434588339754,
       "task_ids": [

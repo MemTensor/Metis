@@ -16,7 +16,7 @@ from safetensors.torch import load_file
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-BASE_MODEL_ROOTS = [REPO_ROOT / "artifacts/models"] + [
+BASE_MODEL_ROOTS = [REPO_ROOT / "eval/artifacts/models"] + [
     Path(item).expanduser()
     for item in os.environ.get("METIS_BASE_MODEL_ROOTS", "").split(os.pathsep)
     if item

@@ -11,3 +11,13 @@ debug data, numeric strict scores, `api_median` provenance, judge metadata, and
 MetisTest operation counts. The paper's `full` column uses the main-table
 aggregate; an independent LowRankMemory run also executes `full` so its raw
 predictions and judge variation can be audited directly.
+
+```bash
+python -m eval.experiments.low_rank.matrix --output-dir eval/outputs/lowrank --dry-run
+python -m eval.experiments.low_rank.matrix --output-dir eval/outputs/lowrank-smoke --rank 1 --benchmark locomo_tps16 --limit 1
+python -m eval.experiments.low_rank.matrix --output-dir eval/outputs/lowrank
+```
+
+Use `--raw-workers` and `--gpu-ids` to control raw-inference parallelism.
+Scoring remains serialized per result file so resumable judge output is not
+written concurrently.

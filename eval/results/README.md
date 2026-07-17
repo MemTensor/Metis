@@ -1,7 +1,7 @@
 # Generated results
 
 Per-example outputs, score metadata, logs, and summaries are generated evidence
-and are not committed here. Store them under ignored `outputs/` (recommended)
+and are not committed here. Store them under ignored `eval/outputs/` (recommended)
 or publish a separately versioned evidence archive containing its run config,
 source commit, data/checkpoint hashes, raw metadata, score metadata, and final
 audit report. Before publishing such an archive, replace server-local paths and

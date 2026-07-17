@@ -22,6 +22,31 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def content_sha256(path: Path) -> str:
+    """Hash evaluation content while excluding machine-local build metadata."""
+
+    digest = hashlib.sha256()
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            metadata = row.get("metadata")
+            if isinstance(metadata, dict):
+                metadata = dict(metadata)
+                metadata.pop("source_dir", None)
+                metadata.pop("reference_token_count", None)
+                row = {**row, "metadata": metadata}
+            normalized = json.dumps(
+                row,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            digest.update((normalized + "\n").encode("utf-8"))
+    return digest.hexdigest()
+
+
 def scan_jsonl(path: Path) -> tuple[int, str | None, str | None]:
     rows = 0
     first = None
@@ -56,11 +81,27 @@ def verify(
             observed = {
                 "bytes": path.stat().st_size,
                 "sha256": sha256(path),
+                "content_sha256": content_sha256(path),
                 "rows": rows,
                 "first_instance_id": first,
                 "last_instance_id": last,
             }
-            checks.update({key: observed[key] == item[key] for key in observed})
+            exact_payload = (
+                observed["bytes"] == item["bytes"]
+                and observed["sha256"] == item["sha256"]
+            )
+            content_match = observed["content_sha256"] == item["content_sha256"]
+            observed["exact_payload"] = exact_payload
+            checks.update(
+                {
+                    "payload": exact_payload or content_match,
+                    "rows": observed["rows"] == item["rows"],
+                    "first_instance_id": observed["first_instance_id"]
+                    == item["first_instance_id"],
+                    "last_instance_id": observed["last_instance_id"]
+                    == item["last_instance_id"],
+                }
+            )
         records.append({"id": item["id"], "path": item["path"], "checks": checks, "observed": observed})
     return {
         "ok": all(all(record["checks"].values()) for record in records),

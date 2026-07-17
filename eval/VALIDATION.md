@@ -7,7 +7,7 @@ directory was modified.
 ## Static and protocol validation
 
 - All Python sources compiled in the existing paper environment.
-- All 15 test functions passed when invoked directly (the environment has no
+- All 20 release tests passed when invoked directly (the environment has no
   `pytest` command).
 - All seven data files passed exact byte-size, SHA-256, row-count, and boundary
   ID verification.
@@ -21,7 +21,8 @@ directory was modified.
   list-recall rows for metric name, score, and normalized prediction.
 - Final main/OOD/LowRank audits re-run the tracked byte/hash/row/boundary data
   verification and require the declared judge protocol. OOD additionally
-  checks the vendored scorer hash and pinned ATM revision.
+  checks the vendored scorer file manifest, wrapper hash, and pinned ATM
+  revision.
 
 ## Real GPU samples
 
@@ -53,8 +54,10 @@ algorithmic and output fields matched.
 ## Validation boundary
 
 Representative OOD inference and three-repeat semantic judging completed with
-zero judge failures. Complete 77-cell main and 14-cell OOD reruns are still in
-progress; this file must be updated with their audit paths and score deltas
-before publication. Aggregate agreement alone is not sufficient: final review
-also requires exact row/ID coverage, raw sampling, query audits, model load
-reports, Temp-LoRA seed/device-map evidence, and judge-source metadata.
+zero judge failures. Complete 77-cell main and 14-cell OOD reruns were still in
+progress when this candidate was prepared. This is sufficient for source
+review, CLI/protocol testing, and a maintainer branch, but not for claiming that
+every published aggregate has been independently re-established. Final review
+must add the completed audit paths and score deltas, exact row/ID coverage, raw
+sampling, query audits, model load reports, Temp-LoRA seed/device-map evidence,
+and judge-source metadata.

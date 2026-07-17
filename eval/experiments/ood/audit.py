@@ -17,6 +17,9 @@ from eval.data.verify import verify
 
 
 DEFAULT_CONFIG = EVAL_ROOT / "configs/paper/table_8_ood.json"
+ATM_VENDOR_ROOT = EVAL_ROOT / "third_party/atm_bench"
+ATM_VENDOR_MANIFEST = ATM_VENDOR_ROOT / "MANIFEST.json"
+ATM_REVISION = "d463445614ad78a48736b98ab901795f7ecaf3da"
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -29,6 +32,27 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def audit_atm_vendor() -> dict[str, Any]:
+    manifest = load(ATM_VENDOR_MANIFEST)
+    failures = []
+    if manifest.get("source_revision") != ATM_REVISION:
+        failures.append("source_revision")
+    files = manifest.get("files") or {}
+    if len(files) != 4:
+        failures.append("file_manifest_count")
+    for relative, expected_hash in files.items():
+        path = ATM_VENDOR_ROOT / relative
+        if not path.is_file():
+            failures.append(f"missing:{relative}")
+        elif sha256(path) != expected_hash:
+            failures.append(f"sha256:{relative}")
+    return {
+        "status": "pass" if not failures else "fail",
+        "manifest_sha256": sha256(ATM_VENDOR_MANIFEST),
+        "failures": failures,
+    }
 
 
 def temp_lora_runtime_failures(metadata: dict[str, Any], method: dict[str, Any]) -> list[str]:
@@ -104,17 +128,27 @@ def audit_cell(
         failures.append("judge_failures")
     if not scored_metadata.get("strict_only") or scored_metadata.get("judge_repeats") != judge["repeats"]:
         failures.append("score_metadata_protocol")
-    if scored_metadata.get("judge_model") != judge["model"]:
-        failures.append("judge_model")
     if float(scored_metadata.get("judge_temperature", -1)) != float(judge["temperature"]):
         failures.append("judge_temperature")
-    if (scored_metadata.get("judge_api_status") or {}).get("available") is not True:
-        failures.append("judge_api_unavailable")
+    if dataset == "atm":
+        if scored_metadata.get("judge_required") is not True:
+            failures.append("judge_required")
+        if scored_metadata.get("judge_model") != judge["model"]:
+            failures.append("judge_model")
+        if (scored_metadata.get("judge_api_status") or {}).get("available") is not True:
+            failures.append("judge_api_unavailable")
+    elif scored_metadata.get("judge_required") is not False:
+        failures.append("unexpected_judge_requirement")
     scorer = EVAL_ROOT / "benchmarks/ood/scripts/score_official_gold.py"
     if scored_metadata.get("scorer_code_sha256") != sha256(scorer):
         failures.append("scorer_code_sha256")
-    if (scored_metadata.get("official_code") or {}).get("atm_revision") != "d463445614ad78a48736b98ab901795f7ecaf3da":
+    if (scored_metadata.get("official_code") or {}).get("atm_revision") != ATM_REVISION:
         failures.append("atm_revision")
+    if (
+        (scored_metadata.get("official_code") or {}).get("atm_vendor_manifest_sha256")
+        != sha256(ATM_VENDOR_MANIFEST)
+    ):
+        failures.append("atm_vendor_manifest_sha256")
     return {
         "cell": f"{method['id']}__{dataset}",
         "status": "pass" if not failures else "fail",
@@ -167,15 +201,29 @@ def main() -> None:
         })
     asset_failures = [item for item in model_assets if item["status"] != "pass"]
     data_report = verify(args.data_dir, only=set(config["datasets"]))
+    official_scorer = audit_atm_vendor()
     report = {
-        "status": "pass" if not failures and not asset_failures and data_report["ok"] else "fail",
+        "status": (
+            "pass"
+            if not failures
+            and not asset_failures
+            and data_report["ok"]
+            and official_scorer["status"] == "pass"
+            else "fail"
+        ),
         "cell_count": len(audits),
         "data": data_report,
+        "official_scorer": official_scorer,
         "model_assets": model_assets,
         "cells": audits,
     }
     write_json(args.run_dir / "audit.json", report)
-    if failures or asset_failures or not data_report["ok"]:
+    if (
+        failures
+        or asset_failures
+        or not data_report["ok"]
+        or official_scorer["status"] != "pass"
+    ):
         raise RuntimeError(f"{len(failures)} of {len(audits)} OOD cells failed audit")
     print(json.dumps({"status": "pass", "cells": len(audits)}))
 

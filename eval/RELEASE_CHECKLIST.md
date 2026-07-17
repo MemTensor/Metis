@@ -2,9 +2,10 @@
 
 Before publishing the evaluation package:
 
-1. Replace the dataset-repository placeholder with the final public repository
-   and pin a released revision. Verify all seven files with
-   `python -m eval.data.verify`.
+1. Keep evaluation data out of Git. Rebuild each available source with
+   `python -m eval.data.prepare`, verify all seven normalized files with
+   `python -m eval.data.verify`, and keep the public limitation for the two
+   owner-provided MemOP sources explicit.
 2. Publish the three paper Metis checkpoints, six additional ablation
    checkpoints, and the delta-Mem adapter at the paths documented in
    `eval/configs/assets.json`. For each Metis evaluation package, retain the
@@ -28,5 +29,5 @@ Before publishing the evaluation package:
 6. Complete the separately owned license, attribution, dataset-card, and model-
    card reviews for all released assets and third-party dependencies.
 
-Do not commit `.env`, downloaded JSONL data, model weights, raw predictions,
+Do not commit `.env`, source/normalized data, model weights, raw predictions,
 scored rows, or judge logs.

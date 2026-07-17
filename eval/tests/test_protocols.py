@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
 from eval.experiments.main_tables.matrix import expand_cells
@@ -167,7 +169,24 @@ def test_release_text_has_no_private_server_paths_or_usernames() -> None:
         "api-" + "int.",
     )
     suffixes = {".py", ".json", ".md", ".toml", ".yml", ".txt"}
-    for path in (root / "eval").rglob("*"):
+    candidates = subprocess.run(
+        [
+            "git",
+            "ls-files",
+            "-z",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "eval",
+        ],
+        cwd=root,
+        check=True,
+        capture_output=True,
+    ).stdout.split(b"\0")
+    for relative in candidates:
+        if not relative:
+            continue
+        path = root / relative.decode()
         if path.is_file() and path.suffix in suffixes:
             text = path.read_text(encoding="utf-8", errors="replace").lower()
             assert not any(value.lower() in text for value in forbidden), path
@@ -193,14 +212,28 @@ def test_generated_result_metadata_is_git_ignored() -> None:
         check=False,
     )
     assert completed.returncode == 1
+    for relative in (
+        "eval/outputs/main/run_config.json",
+        "eval/artifacts/assets.local.json",
+        "eval/artifacts/models/Qwen3.5-4B/config.json",
+        "eval/data/raw/locomo/locomo10.json",
+    ):
+        completed = subprocess.run(
+            ["git", "check-ignore", "--quiet", relative],
+            cwd=root,
+            check=False,
+        )
+        assert completed.returncode == 0, relative
 
 
 def test_vendored_atm_metric_imports_without_external_checkout() -> None:
     from eval.benchmarks.ood.scripts import score_official_gold
+    from eval.experiments.ood.audit import audit_atm_vendor
 
     score_official_gold.load_atm_evaluator()
     assert score_official_gold.atm_number_core is not None
     assert score_official_gold.atm_list_core is not None
+    assert audit_atm_vendor()["status"] == "pass"
 
 
 def test_unmigrated_paper_experiments_have_no_placeholder_runner() -> None:
@@ -243,3 +276,114 @@ def test_final_audits_reverify_data_and_judge_provenance() -> None:
         assert "judge_model" in source
     ood = (root / "ood/audit.py").read_text(encoding="utf-8")
     assert "scorer_code_sha256" in ood and "atm_revision" in ood
+
+
+def test_memdaily_scoring_records_that_no_judge_is_required() -> None:
+    from eval.benchmarks.ood.scripts import score_official_gold
+
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        instances = root / "instances.jsonl"
+        raw = root / "raw.jsonl"
+        scored = root / "scored.jsonl"
+        summary = root / "summary.json"
+        instances.write_text(
+            json.dumps(
+                {
+                    "instance_id": "memdaily__test",
+                    "dataset": "memdaily_official",
+                    "answer": "A",
+                    "metadata": {
+                        "question_type": "simple",
+                        "original_question": "test",
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        raw.write_text(
+            json.dumps({"instance_id": "memdaily__test", "raw_output": "A"}) + "\n",
+            encoding="utf-8",
+        )
+        previous_argv = sys.argv
+        try:
+            sys.argv = [
+                "score_official_gold",
+                "--instances",
+                str(instances),
+                "--input",
+                str(raw),
+                "--output",
+                str(scored),
+                "--summary",
+                str(summary),
+            ]
+            score_official_gold.main()
+        finally:
+            sys.argv = previous_argv
+        meta = json.loads(scored.with_suffix(".score_meta.json").read_text())
+        assert meta["judge_required"] is False
+        assert meta["judge_model"] is None
+        assert meta["judge_api_status"] == {"required": False, "available": None}
+
+
+def test_completed_atm_scoring_preserves_judge_provenance_without_api_call() -> None:
+    from eval.benchmarks.ood.scripts import score_official_gold
+
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        instances = root / "instances.jsonl"
+        raw = root / "raw.jsonl"
+        scored = root / "scored.jsonl"
+        summary = root / "summary.json"
+        instance = {
+            "instance_id": "atm__test",
+            "dataset": "atm_bench_text_sgm",
+            "answer": "gold",
+            "metadata": {
+                "question_type": "open_end",
+                "original_question": "test",
+            },
+        }
+        raw_row = {"instance_id": "atm__test", "raw_output": "answer"}
+        scored_row = {
+            **raw_row,
+            "gold": {"answer": "gold", "question_type": "open_end", "original_question": "test"},
+            "score": {
+                "primary_score": 1.0,
+                "official_judge": {"judge_model": "gpt-4.1-mini", "accuracy": 1.0},
+            },
+        }
+        instances.write_text(json.dumps(instance) + "\n", encoding="utf-8")
+        raw.write_text(json.dumps(raw_row) + "\n", encoding="utf-8")
+        scored.write_text(json.dumps(scored_row) + "\n", encoding="utf-8")
+        scored.with_suffix(".score_meta.json").write_text(
+            json.dumps(
+                {
+                    "judge_model": "gpt-4.1-mini",
+                    "judge_api_status": {"available": True, "source": "initial_run"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        previous_argv = sys.argv
+        try:
+            sys.argv = [
+                "score_official_gold",
+                "--instances",
+                str(instances),
+                "--input",
+                str(raw),
+                "--output",
+                str(scored),
+                "--summary",
+                str(summary),
+            ]
+            score_official_gold.main()
+        finally:
+            sys.argv = previous_argv
+        meta = json.loads(scored.with_suffix(".score_meta.json").read_text())
+        assert meta["judge_required"] is True
+        assert meta["judge_model"] == "gpt-4.1-mini"
+        assert meta["judge_api_status"]["available"] is True

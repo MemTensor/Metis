@@ -13,3 +13,16 @@ steps 14000/8000/14000. Assets are resolved through
 Temp-LoRA 27B and Metis 27B are both two-GPU cells, but use their distinct
 paper-audited loading policies from the matrix (`balanced` and
 `paired_layers`, respectively).
+
+Dry-run the complete matrix, run a one-row smoke, or run all cells:
+
+```bash
+python -m eval.experiments.main_tables.matrix --output-dir eval/outputs/main --dry-run
+python -m eval.experiments.main_tables.matrix --output-dir eval/outputs/main-smoke --method metis4b_v24_s14000 --benchmark locomo_tps16 --limit 1
+python -m eval.experiments.main_tables.matrix --output-dir eval/outputs/main
+```
+
+The matrix launches cells sequentially and does not skip a completed cell.
+For an interruptible full run, use repeated `--method` and `--benchmark`
+filters as explicit shards, keep one output directory per shard, and record
+which shards completed before relaunching.

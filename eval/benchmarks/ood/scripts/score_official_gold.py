@@ -26,6 +26,7 @@ from eval.common.paths import REPO_ROOT
 
 
 ATM_JUDGE_PROMPT = ""
+ATM_VENDOR_MANIFEST = REPO_ROOT / "eval/third_party/atm_bench/MANIFEST.json"
 atm_number_core: Any = None
 atm_list_core: Any = None
 atm_build_judge_prompt: Any = None
@@ -327,9 +328,17 @@ def main() -> None:
     if len(existing) != len(existing_rows):
         raise ValueError("duplicate instance id in resumable scored output")
     pending = [(instance_by_id[row["instance_id"]], row) for row in raw_rows if row["instance_id"] not in existing]
+    score_meta_path = args.output.with_suffix(".score_meta.json")
+    previous_meta = (
+        json.loads(score_meta_path.read_text(encoding="utf-8"))
+        if score_meta_path.is_file()
+        else {}
+    )
 
     client = None
     api_status = None
+    judge_required = any(needs_judge(instance) for instance in instances)
+    resumed_judge_model = previous_meta.get("judge_model")
     if any(needs_judge(instance) for instance, _ in pending):
         client = JudgeClient(
             args.judge_base_url,
@@ -341,6 +350,32 @@ def main() -> None:
         api_status = client.check()
         if not api_status.get("available"):
             raise RuntimeError(f"Judge endpoint/model check failed: {api_status}")
+    elif judge_required:
+        api_status = previous_meta.get("judge_api_status")
+        if not (api_status or {}).get("available"):
+            judged_rows = [
+                row
+                for row in existing_rows
+                if (row.get("score") or {}).get("official_judge")
+            ]
+            if not judged_rows:
+                raise RuntimeError(
+                    "resumed ATM output has no pending judge rows and no prior judge provenance"
+                )
+            models = {
+                row["score"]["official_judge"].get("judge_model")
+                for row in judged_rows
+                if row["score"]["official_judge"].get("judge_model")
+            }
+            if len(models) != 1:
+                raise RuntimeError(
+                    f"resumed ATM output has ambiguous judge models: {sorted(models)}"
+                )
+            resumed_judge_model = models.pop()
+            api_status = {
+                "available": True,
+                "source": "completed_judge_rows",
+            }
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     write_lock = threading.Lock()
@@ -414,14 +449,30 @@ def main() -> None:
         "scorer_commit": os.environ.get("MEMQA_OOD_SCORER_COMMIT"),
         "scorer_code_sha256": sha256_file(Path(__file__)),
         "judge_temperature": 0.0,
-        "judge_model": args.judge_model if client else None,
-        "judge_api_status": api_status,
+        "judge_required": judge_required,
+        "judge_model": (
+            args.judge_model
+            if client
+            else resumed_judge_model
+            if judge_required
+            else None
+        ),
+        "judge_api_status": (
+            api_status
+            if judge_required
+            else {"required": False, "available": None}
+        ),
         "judge_failure_count": summary["judge_failure_count"],
         "official_code": {
             "atm_revision": "d463445614ad78a48736b98ab901795f7ecaf3da",
             "atm_prompt_sha256": hashlib.sha256(ATM_JUDGE_PROMPT.encode()).hexdigest(),
+            "atm_vendor_manifest_sha256": sha256_file(ATM_VENDOR_MANIFEST),
         },
-        "judge_substitution": "official rubric evaluated by the configured OpenAI-compatible judge",
+        "judge_substitution": (
+            "official rubric evaluated by the configured OpenAI-compatible judge"
+            if judge_required
+            else None
+        ),
         "elapsed_sec": round(time.time() - started, 3),
         "summary": summary,
     }
@@ -429,7 +480,7 @@ def main() -> None:
         raise RuntimeError(f"nonzero judge failure count: {summary['judge_failure_count']}")
     args.summary.parent.mkdir(parents=True, exist_ok=True)
     args.summary.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    args.output.with_suffix(".score_meta.json").write_text(
+    score_meta_path.write_text(
         json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(meta, ensure_ascii=False, indent=2))
