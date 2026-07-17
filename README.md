@@ -21,9 +21,8 @@
   </p>
 </div>
 
-## Research Preview
-
-To address the limitations of external memory, we introduce **memory foundation models** that empower large foundation models with **native memory**. This converts memory from an external module into an internal mechanism of the backbone, directly involved in forward computation. Memory foundation models are natively stateful across multiple inferences: they formulate, maintain, and utilize memory states inside the backbone from prior interactions. Based on this formulation, we propose **Metis**, the first prototype of a memory foundation model.
+> [!IMPORTANT]
+> **Research preview.** This repository provides the Metis architecture, data format documentation, inference examples, a multi-step mid-training and evaluation harness, and official model weights. Training data is not included yet.
 
 ## Overview
 
@@ -232,15 +231,6 @@ The sampler anneals each task from `TASK0_WEIGHT_START` … `TASK4_WEIGHT_START`
 
 ## Evaluation
 
-Training-time evaluation uses the validation split supplied to `train.sh`. `EVAL_STEPS` controls loss evaluation, while `GEN_EVAL_STEPS` controls the more expensive generation evaluation. A standalone evaluation package will be released separately.
-
-The technical report evaluates Metis without replaying the original evidence at query time:
-
-- Metis-27B reaches **73.77** on the Metis Test set and **50.82** on NextMem under the no-context setting.
-- In a controlled single-A800, batch-size-1 sweep, Metis-4B achieves an **11.37× query-latency speedup** over Full Context at 128K history for 32 generated tokens.
-- A rank-64 Metis-4B state occupies **2.11 MB per session** and retains **99.9%** of the full-state average score in the report's compression study.
-
-These results are configuration-specific. The full benchmark tables, prompts, baselines, and evaluation protocol are provided in the [technical report](https://arxiv.org/abs/XXXX.XXXXX).
 
 ## Roadmap
 
